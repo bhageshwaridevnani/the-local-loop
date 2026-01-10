@@ -1,11 +1,11 @@
 import os
-from openai import AsyncOpenAI
+import google.generativeai as genai
 from typing import Optional, Dict
 import json
 
 class AreaIntelligenceAgent:
     """
-    Area Intelligence Agent
+    Area Intelligence Agent (Google Gemini Version)
     
     Purpose:
     - Validates whether user belongs to Area 1 (service area)
@@ -19,24 +19,26 @@ class AreaIntelligenceAgent:
     """
     
     def __init__(self):
-        self.client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        # Configure Gemini
+        genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+        self.model = genai.GenerativeModel('gemini-1.5-flash')
         
-        # Define Area 1 (Service Area) - Example: Andheri West, Mumbai
+        # Define Area 1 (Service Area) - Ahmedabad, Gujarat
         self.area_1_config = {
-            "name": "Andheri West, Mumbai",
-            "pincodes": ["400053", "400058", "400102"],
+            "name": "Gota, Ahmedabad",
+            "pincodes": ["382481", "382470", "382424"],
             "landmarks": [
-                "Lokhandwala Complex",
-                "Versova",
-                "Four Bungalows",
-                "DN Nagar",
-                "Oshiwara"
+                "Silver Oak University",
+                "Gota Gam",
+                "Gota Circle",
+                "Ognaj",
+                "Sargasan"
             ],
             "boundaries": {
-                "north": "Jogeshwari",
-                "south": "Juhu",
-                "east": "Andheri East",
-                "west": "Arabian Sea"
+                "north": "Vaishnodevi Circle",
+                "south": "Sola",
+                "east": "Tragad",
+                "west": "Ognaj"
             }
         }
     
@@ -119,7 +121,7 @@ class AreaIntelligenceAgent:
     
     async def _validate_address_similarity(self, address: str, city: str) -> float:
         """
-        Use AI to analyze address similarity with Area 1
+        Use Gemini AI to analyze address similarity with Area 1
         Returns score 0.0-1.0
         """
         try:
@@ -140,7 +142,7 @@ Consider:
 3. Neighborhood indicators
 4. City match
 
-Respond with ONLY a JSON object:
+Respond with ONLY a JSON object (no markdown, no code blocks):
 {{
     "score": 0.0-1.0,
     "reasoning": "brief explanation"
@@ -153,21 +155,21 @@ Score Guidelines:
 - 0.0-0.3: Unlikely in Area 1
 """
             
-            response = await self.client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "You are a precise area validation AI. Always respond with valid JSON."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.3,
-                max_tokens=200
-            )
+            response = self.model.generate_content(prompt)
+            result_text = response.text.strip()
             
-            result = json.loads(response.choices[0].message.content)
+            # Remove markdown code blocks if present
+            if result_text.startswith('```'):
+                result_text = result_text.split('```')[1]
+                if result_text.startswith('json'):
+                    result_text = result_text[4:]
+                result_text = result_text.strip()
+            
+            result = json.loads(result_text)
             return float(result.get("score", 0.5))
             
         except Exception as e:
-            print(f"AI validation error: {e}")
+            print(f"Gemini AI validation error: {e}")
             return 0.5  # Neutral score on error
     
     def _validate_geolocation(self, coordinates: Dict) -> float:

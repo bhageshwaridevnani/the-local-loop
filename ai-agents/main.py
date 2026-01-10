@@ -8,8 +8,26 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Import agents
-from agents.area_intelligence_agent import AreaIntelligenceAgent
+# Import agents - Use Gemini version if GEMINI_API_KEY is set
+if os.getenv("GEMINI_API_KEY"):
+    print("🤖 Using Google Gemini AI")
+    from agents.area_intelligence_agent_gemini import AreaIntelligenceAgent
+elif os.getenv("OPENAI_API_KEY"):
+    print("🤖 Using OpenAI GPT-4o")
+    from agents.area_intelligence_agent import AreaIntelligenceAgent
+else:
+    print("⚠️  No API key found. Please set GEMINI_API_KEY or OPENAI_API_KEY in .env file")
+    # Use a dummy agent for testing
+    class AreaIntelligenceAgent:
+        async def validate_area(self, address, pincode, city, coordinates=None):
+            return {
+                "status": "approved",
+                "confidence": 0.85,
+                "message": "Demo mode - Area validation bypassed",
+                "area_name": "Demo Area",
+                "reasoning": "No API key configured",
+                "scores": {"pincode": 0.85, "address": 0.85, "geolocation": 0.85}
+            }
 
 app = FastAPI(title="The Local Loop - AI Agents", version="1.0.0")
 
@@ -35,10 +53,12 @@ class AreaValidationRequest(BaseModel):
 # Health check
 @app.get("/")
 async def root():
+    api_status = "Gemini" if os.getenv("GEMINI_API_KEY") else "OpenAI" if os.getenv("OPENAI_API_KEY") else "Demo Mode"
     return {
         "status": "success",
         "message": "The Local Loop AI Agents API",
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "ai_provider": api_status
     }
 
 @app.get("/health")
@@ -65,10 +85,22 @@ async def validate_area(request: AreaValidationRequest):
             "data": result
         }
     except Exception as e:
+        print(f"Error in area validation: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn
+    print("\n" + "="*50)
+    print("🚀 Starting The Local Loop AI Agents Service")
+    print("="*50)
+    if os.getenv("GEMINI_API_KEY"):
+        print("✅ Google Gemini API Key found")
+    elif os.getenv("OPENAI_API_KEY"):
+        print("✅ OpenAI API Key found")
+    else:
+        print("⚠️  No API key found - Running in demo mode")
+        print("   Set GEMINI_API_KEY or OPENAI_API_KEY in .env file")
+    print("="*50 + "\n")
+    
     uvicorn.run(app, host="0.0.0.0", port=8000)
 
-# Made with Bob

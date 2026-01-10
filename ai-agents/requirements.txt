@@ -1,5 +1,9 @@
 fastapi==0.109.0
 uvicorn==0.27.0
-openai==1.12.0
 python-dotenv==1.0.0
-pydantic==2.5.3
+pydantic==2.10.4
+pydantic-core==2.27.2
+
+# AI Providers (install one or both)
+openai==1.12.0
+google-generativeai==0.8.3

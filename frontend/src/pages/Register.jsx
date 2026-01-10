@@ -628,4 +628,3 @@ const Register = () => {
 
 export default Register;
 
-// Made with Bob
