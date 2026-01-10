@@ -8,6 +8,8 @@ const { errorHandler, notFound } = require('./middleware/errorHandler');
 // Import routes
 const authRoutes = require('./routes/auth');
 const customerRoutes = require('./routes/customer');
+const vendorRoutes = require('./routes/vendor');
+const deliveryRoutes = require('./routes/delivery');
 
 // Initialize Express app
 const app = express();
@@ -43,6 +45,8 @@ app.get('/health', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/customer', customerRoutes);
+app.use('/api/vendor', vendorRoutes);
+app.use('/api/delivery', deliveryRoutes);
 
 // 404 handler
 app.use(notFound);
@@ -74,6 +78,8 @@ const startServer = async () => {
       console.log(`   - Health Check: http://localhost:${PORT}/health`);
       console.log(`   - Auth API: http://localhost:${PORT}/api/auth`);
       console.log(`   - Customer API: http://localhost:${PORT}/api/customer`);
+      console.log(`   - Vendor API: http://localhost:${PORT}/api/vendor`);
+      console.log(`   - Delivery API: http://localhost:${PORT}/api/delivery`);
       console.log('\n' + '='.repeat(60) + '\n');
     });
   } catch (error) {
