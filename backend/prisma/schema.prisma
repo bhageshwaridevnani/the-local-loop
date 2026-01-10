@@ -1,0 +1,176 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// User model - supports 3 roles: customer, vendor, delivery
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  password      String
+  phone         String?
+  role          String    @default("CUSTOMER")
+  areaId        String?   @map("area_id")
+  area          Area?     @relation(fields: [areaId], references: [id])
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  vendor        Vendor?
+  orders        Order[]   @relation("CustomerOrders")
+  deliveries    Delivery[]
+  deliveryProfile DeliveryProfile?
+
+  @@map("users")
+}
+
+// DeliveryProfile model - for delivery partners
+model DeliveryProfile {
+  id                String    @id @default(uuid())
+  userId            String    @unique @map("user_id")
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating            Float     @default(4.5)
+  totalDeliveries   Int       @default(0) @map("total_deliveries")
+  vehicleType       String?   @map("vehicle_type")
+  vehicleNumber     String?   @map("vehicle_number")
+  isAvailable       Boolean   @default(false) @map("is_available")
+  availableFrom     String?   @map("available_from")  // e.g., "09:00"
+  availableTo       String?   @map("available_to")    // e.g., "21:00"
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  @@map("delivery_profiles")
+}
+
+// Area model - for hyperlocal restriction
+model Area {
+  id            String    @id @default(uuid())
+  name          String
+  pincode       String
+  city          String
+  state         String
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  users         User[]
+  vendors       Vendor[]
+
+  @@map("areas")
+}
+
+// Vendor model
+model Vendor {
+  id              String    @id @default(uuid())
+  userId          String    @unique @map("user_id")
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shopName        String    @map("shop_name")
+  address         String
+  category        String?
+  rating          Float     @default(4.5)
+  reviewCount     Int       @default(0) @map("review_count")
+  commissionRate  Float     @default(5.0) @map("commission_rate")
+  areaId          String?   @map("area_id")
+  area            Area?     @relation(fields: [areaId], references: [id])
+  isActive        Boolean   @default(true) @map("is_active")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  products        Product[]
+  orders          Order[]
+
+  @@map("vendors")
+}
+
+// Product model
+model Product {
+  id            String    @id @default(uuid())
+  vendorId      String    @map("vendor_id")
+  vendor        Vendor    @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  name          String
+  brand         String?
+  category      String?
+  price         Float
+  stock         Int       @default(0)
+  unit          String    @default("piece")
+  description   String?
+  imageUrl      String?   @map("image_url")
+  isAvailable   Boolean   @default(true) @map("is_available")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  orderItems    OrderItem[]
+
+  @@map("products")
+}
+
+// Order model
+model Order {
+  id              String      @id @default(uuid())
+  customerId      String      @map("customer_id")
+  customer        User        @relation("CustomerOrders", fields: [customerId], references: [id])
+  vendorId        String      @map("vendor_id")
+  vendor          Vendor      @relation(fields: [vendorId], references: [id])
+  status          String      @default("PENDING")
+  totalAmount     Float       @map("total_amount")
+  deliveryFee     Float       @default(10.0) @map("delivery_fee")
+  deliveryAddress String      @map("delivery_address")
+  paymentMethod   String      @default("COD") @map("payment_method")
+  paymentStatus   String      @default("pending") @map("payment_status")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  // Relations
+  items           OrderItem[]
+  delivery        Delivery?
+
+  @@map("orders")
+}
+
+// OrderItem model
+model OrderItem {
+  id          String   @id @default(uuid())
+  orderId     String   @map("order_id")
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String   @map("product_id")
+  product     Product  @relation(fields: [productId], references: [id])
+  quantity    Int
+  price       Float
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("order_items")
+}
+
+// Delivery model
+model Delivery {
+  id                String         @id @default(uuid())
+  orderId           String         @unique @map("order_id")
+  order             Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  deliveryPartnerId String?        @map("delivery_partner_id")
+  deliveryPartner   User?          @relation(fields: [deliveryPartnerId], references: [id])
+  status            String         @default("PENDING")  // PENDING, ACCEPTED, REJECTED, PICKED_UP, DELIVERED
+  requestedAt       DateTime       @default(now()) @map("requested_at")
+  acceptedAt        DateTime?      @map("accepted_at")
+  rejectedAt        DateTime?      @map("rejected_at")
+  pickupTime        DateTime?      @map("pickup_time")
+  deliveryTime      DateTime?      @map("delivery_time")
+  rejectionReason   String?        @map("rejection_reason")
+  customerRating    Float?         @map("customer_rating")
+  vendorRating      Float?         @map("vendor_rating")
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+
+  @@map("deliveries")
+}

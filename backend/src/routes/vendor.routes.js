@@ -1,17 +1,23 @@
-const express = require('express');
+import express from 'express';
+import { authenticate } from '../middleware/auth.middleware.js';
+import {
+  getVendors,
+  getVendor,
+  getVendorStats,
+  updateVendorSettings,
+  toggleShopStatus
+} from '../controllers/vendor.controller.js';
+
 const router = express.Router();
 
-// Placeholder routes - to be implemented
-router.get('/', (req, res) => {
-  res.status(501).json({ message: 'Get all vendors - To be implemented' });
-});
+// Public routes
+router.get('/', getVendors);
+router.get('/:id', getVendor);
 
-router.post('/', (req, res) => {
-  res.status(501).json({ message: 'Create vendor - To be implemented' });
-});
+// Protected routes (vendor only)
+router.get('/vendor/stats', authenticate, getVendorStats);
+router.put('/vendor/settings', authenticate, updateVendorSettings);
+router.patch('/vendor/toggle-status', authenticate, toggleShopStatus);
 
-router.get('/:id', (req, res) => {
-  res.status(501).json({ message: 'Get vendor by ID - To be implemented' });
-});
+export default router;
 
-module.exports = router;

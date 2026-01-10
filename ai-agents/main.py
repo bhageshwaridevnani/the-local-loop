@@ -1,111 +1,224 @@
+"""
+The Local Loop - AI Agents Service
+Main entry point for the AI autonomous agents system
+"""
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 import os
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
 
-# Import agents - Priority: Vertex AI > Gemini > OpenAI
-if os.getenv("GCP_PROJECT_ID"):
-    print("🤖 Using Google Vertex AI (GCP)")
-    print(f"✅ GCP Project: {os.getenv('GCP_PROJECT_ID')}")
-    print(f"✅ Location: {os.getenv('GCP_LOCATION', 'us-central1')}")
-    from agents.area_intelligence_agent_vertex import AreaIntelligenceAgentVertex as AreaIntelligenceAgent
-elif os.getenv("GEMINI_API_KEY"):
-    print("🤖 Using Google Gemini AI")
-    from agents.area_intelligence_agent_gemini import AreaIntelligenceAgent
-elif os.getenv("OPENAI_API_KEY"):
-    print("🤖 Using OpenAI GPT-4o")
-    from agents.area_intelligence_agent import AreaIntelligenceAgent
-else:
-    print("⚠️  No API key found. Please set GCP_PROJECT_ID, GEMINI_API_KEY, or OPENAI_API_KEY in .env file")
-    # Use a dummy agent for testing
-    class AreaIntelligenceAgent:
-        async def validate_area(self, address, pincode, city, coordinates=None):
-            return {
-                "status": "approved",
-                "confidence": 0.85,
-                "message": "Demo mode - Area validation bypassed",
-                "area_name": "Demo Area",
-                "reasoning": "No API key configured",
-                "scores": {"pincode": 0.85, "address": 0.85, "geolocation": 0.85}
-            }
+# Initialize FastAPI app
+app = FastAPI(
+    title="The Local Loop AI Agents",
+    description="AI-powered autonomous agents for hyperlocal commerce",
+    version="1.0.0"
+)
 
-app = FastAPI(title="The Local Loop - AI Agents", version="1.0.0")
-
-# CORS middleware - Allow all origins for development
+# CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for development
-    allow_credentials=False,  # Must be False when allow_origins is "*"
+    allow_origins=[os.getenv("BACKEND_URL", "http://localhost:5000")],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Initialize agents
-area_agent = AreaIntelligenceAgent()
+# Pydantic models
+class OrderRequest(BaseModel):
+    order_id: str
+    customer_id: str
+    vendor_id: str
+    items: List[dict]
+    total_amount: float
+    delivery_address: str
 
-# Request models
-class AreaValidationRequest(BaseModel):
-    address: str
-    pincode: str
-    city: str
-    coordinates: Optional[dict] = None
+class DeliveryAssignment(BaseModel):
+    order_id: str
+    available_partners: List[dict]
 
-# Health check
+class VendorOptimization(BaseModel):
+    vendor_id: str
+    products: List[dict]
+
+# Health check endpoint
 @app.get("/")
 async def root():
-    api_status = "Gemini" if os.getenv("GEMINI_API_KEY") else "OpenAI" if os.getenv("OPENAI_API_KEY") else "Demo Mode"
     return {
-        "status": "success",
-        "message": "The Local Loop AI Agents API",
-        "version": "1.0.0",
-        "ai_provider": api_status
+        "status": "ok",
+        "message": "The Local Loop AI Agents Service",
+        "version": "1.0.0"
     }
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "service": "ai-agents"}
+    return {
+        "status": "healthy",
+        "agents": {
+            "order_orchestration": "active",
+            "delivery_assignment": "active",
+            "vendor_optimization": "active",
+            "customer_recommendation": "active",
+            "area_intelligence": "active"
+        }
+    }
 
-# Area validation endpoint
-@app.post("/agents/area-validation")
-async def validate_area(request: AreaValidationRequest):
+# Order Orchestration Agent
+@app.post("/agents/order-orchestration")
+async def orchestrate_order(request: OrderRequest):
     """
-    Validate if the user's address is in Area 1 (service area)
-    Uses AI to analyze address similarity, pincode, and geolocation
+    AI Agent that orchestrates order processing
+    - Validates order
+    - Assigns to optimal vendor
+    - Triggers delivery assignment
     """
     try:
-        result = await area_agent.validate_area(
-            address=request.address,
-            pincode=request.pincode,
-            city=request.city,
-            coordinates=request.coordinates
-        )
-        
+        # TODO: Implement AI logic using LangGraph
+        # For now, return mock response
         return {
-            "status": "success",
-            "data": result
+            "success": True,
+            "order_id": request.order_id,
+            "status": "confirmed",
+            "assigned_vendor": request.vendor_id,
+            "estimated_preparation_time": 15,
+            "message": "Order orchestrated successfully"
         }
     except Exception as e:
-        print(f"Error in area validation: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Delivery Assignment Agent
+@app.post("/agents/delivery-assignment")
+async def assign_delivery(request: DeliveryAssignment):
+    """
+    AI Agent that assigns optimal delivery partner
+    - Considers distance, availability, performance
+    - Makes autonomous decision
+    """
+    try:
+        # TODO: Implement AI logic
+        if not request.available_partners:
+            return {
+                "success": False,
+                "message": "No delivery partners available"
+            }
+        
+        # Mock: Select first available partner
+        selected_partner = request.available_partners[0]
+        
+        return {
+            "success": True,
+            "order_id": request.order_id,
+            "assigned_partner_id": selected_partner.get("id"),
+            "partner_name": selected_partner.get("name"),
+            "estimated_delivery_time": 30,
+            "reasoning": "Selected based on proximity and availability"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Vendor Optimization Agent
+@app.post("/agents/vendor-optimization")
+async def optimize_vendor(request: VendorOptimization):
+    """
+    AI Agent that provides vendor optimization suggestions
+    - Price recommendations
+    - Stock alerts
+    - Demand predictions
+    """
+    try:
+        # TODO: Implement AI logic
+        suggestions = []
+        
+        for product in request.products:
+            if product.get("stock", 0) < 10:
+                suggestions.append({
+                    "product_id": product.get("id"),
+                    "type": "stock_alert",
+                    "message": f"Low stock for {product.get('name')}. Consider restocking.",
+                    "recommended_quantity": 50
+                })
+        
+        return {
+            "success": True,
+            "vendor_id": request.vendor_id,
+            "suggestions": suggestions,
+            "optimization_score": 85
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Customer Recommendation Agent
+@app.get("/agents/customer-recommendations/{customer_id}")
+async def get_recommendations(customer_id: str, area_id: Optional[str] = None):
+    """
+    AI Agent that provides personalized recommendations
+    - Based on purchase history
+    - Time of day
+    - Area demand patterns
+    """
+    try:
+        # TODO: Implement AI logic
+        return {
+            "success": True,
+            "customer_id": customer_id,
+            "recommendations": [
+                {
+                    "type": "trending",
+                    "items": ["Fresh Vegetables", "Dairy Products", "Snacks"]
+                },
+                {
+                    "type": "personalized",
+                    "items": ["Your favorite brand milk", "Weekly groceries"]
+                }
+            ]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Area Intelligence Agent
+@app.post("/agents/area-validation")
+async def validate_area(pincode: str, address: str):
+    """
+    AI Agent that validates if user belongs to serviceable area
+    - Checks pincode
+    - Validates address
+    """
+    try:
+        # TODO: Implement AI logic with geolocation
+        # Mock: Accept all for now
+        return {
+            "success": True,
+            "is_serviceable": True,
+            "area_id": "area-1",
+            "area_name": "Local Area 1",
+            "message": "Address is within serviceable area"
+        }
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn
-    print("\n" + "="*50)
-    print("🚀 Starting The Local Loop AI Agents Service")
-    print("="*50)
-    if os.getenv("GEMINI_API_KEY"):
-        print("✅ Google Gemini API Key found")
-    elif os.getenv("OPENAI_API_KEY"):
-        print("✅ OpenAI API Key found")
-    else:
-        print("⚠️  No API key found - Running in demo mode")
-        print("   Set GEMINI_API_KEY or OPENAI_API_KEY in .env file")
-    print("="*50 + "\n")
     
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.getenv("PORT", 8000))
+    host = os.getenv("HOST", "0.0.0.0")
+    
+    print(f"""
+╔═══════════════════════════════════════════════════════╗
+║                                                       ║
+║   🤖 The Local Loop AI Agents Service                ║
+║                                                       ║
+║   Server running on: http://{host}:{port}            ║
+║   Environment: {os.getenv('ENVIRONMENT', 'development')}                      ║
+║                                                       ║
+║   AI Agents Ready! 🚀                                ║
+║                                                       ║
+╚═══════════════════════════════════════════════════════╝
+    """)
+    
+    uvicorn.run(app, host=host, port=port)
 

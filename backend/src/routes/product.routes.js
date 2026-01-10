@@ -1,13 +1,29 @@
-const express = require('express');
+import express from 'express';
+import { authenticate } from '../middleware/auth.middleware.js';
+import {
+  createProduct,
+  getProducts,
+  getProduct,
+  updateProduct,
+  deleteProduct,
+  getVendorProducts,
+  toggleProductAvailability
+} from '../controllers/product.controller.js';
+
 const router = express.Router();
 
-// Placeholder routes - to be implemented
-router.get('/', (req, res) => {
-  res.status(501).json({ message: 'Get all products - To be implemented' });
-});
+// Public routes
+router.get('/', getProducts);
+router.get('/:id', getProduct);
 
-router.post('/', (req, res) => {
-  res.status(501).json({ message: 'Create product - To be implemented' });
-});
+// Protected routes (require authentication)
+router.post('/', authenticate, createProduct);
+router.put('/:id', authenticate, updateProduct);
+router.delete('/:id', authenticate, deleteProduct);
+router.patch('/:id/toggle', authenticate, toggleProductAvailability);
 
-module.exports = router;
+// Vendor-specific routes
+router.get('/vendor/my-products', authenticate, getVendorProducts);
+
+export default router;
+

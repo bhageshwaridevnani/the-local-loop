@@ -1,13 +1,21 @@
-const express = require('express');
+import express from 'express';
+import { authenticate } from '../middleware/auth.middleware.js';
+import {
+  createOrder,
+  getOrders,
+  getOrder,
+  updateOrderStatus,
+  cancelOrder
+} from '../controllers/order.controller.js';
+
 const router = express.Router();
 
-// Placeholder routes - to be implemented
-router.get('/', (req, res) => {
-  res.status(501).json({ message: 'Get all orders - To be implemented' });
-});
+// All order routes require authentication
+router.post('/', authenticate, createOrder);
+router.get('/', authenticate, getOrders);
+router.get('/:id', authenticate, getOrder);
+router.patch('/:id/status', authenticate, updateOrderStatus);
+router.delete('/:id', authenticate, cancelOrder);
 
-router.post('/', (req, res) => {
-  res.status(501).json({ message: 'Create order - To be implemented' });
-});
+export default router;
 
-module.exports = router;

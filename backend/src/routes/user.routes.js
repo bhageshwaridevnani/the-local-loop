@@ -1,17 +1,16 @@
-const express = require('express');
+import express from 'express';
+import { register, login, getCurrentUser, logout } from '../controllers/auth.controller.js';
+import { authenticate } from '../middleware/auth.middleware.js';
+
 const router = express.Router();
 
-// Placeholder routes - to be implemented
-router.get('/profile', (req, res) => {
-  res.status(501).json({ message: 'Get user profile - To be implemented' });
-});
+// Public routes
+router.post('/register', register);
+router.post('/login', login);
 
-router.put('/profile', (req, res) => {
-  res.status(501).json({ message: 'Update user profile - To be implemented' });
-});
+// Protected routes
+router.get('/me', authenticate, getCurrentUser);
+router.post('/logout', authenticate, logout);
 
-router.get('/area', (req, res) => {
-  res.status(501).json({ message: 'Get user area - To be implemented' });
-});
+export default router;
 
-module.exports = router;

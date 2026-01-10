@@ -8,20 +8,30 @@ __pycache__/
 env/
 venv/
 ENV/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
 
 # Environment variables
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # GCP Credentials (NEVER commit these!)
 gcp-key.json
 *-key.json
 *.json.key
-.env.local
 
 # Build outputs
 dist/
 build/
 *.egg-info/
+.next/
+out/
+.cache/
+.parcel-cache/
 
 # IDE
 .vscode/
@@ -29,10 +39,21 @@ build/
 *.swp
 *.swo
 *~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
 
 # OS
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+Desktop.ini
 
 # Logs
 *.log
@@ -40,7 +61,54 @@ logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
 
 # Package manager
 package-lock.json
 yarn.lock
+pnpm-lock.yaml
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+backend/prisma/dev.db
+backend/prisma/dev.db-journal
+
+# Testing
+coverage/
+.nyc_output/
+*.cover
+.hypothesis/
+.pytest_cache/
+htmlcov/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+.cache
+
+# Frontend specific
+frontend/dist/
+frontend/build/
+frontend/.vite/
+frontend/node_modules/
+
+# Backend specific
+backend/node_modules/
+backend/dist/
+backend/build/
+
+# AI Agents specific
+ai-agents/__pycache__/
+ai-agents/*.pyc
+ai-agents/venv/
+ai-agents/.venv/
+
+# Misc
+*.orig
+.eslintcache
+.stylelintcache

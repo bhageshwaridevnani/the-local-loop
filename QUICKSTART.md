@@ -1,181 +1,103 @@
-# 🚀 Quick Start Guide - The Local Loop
+# ⚡ Quick Start Guide
 
-Get your project running in 5 minutes!
+Get up and running in 5 minutes!
 
-## ✅ Step 1: Test the Frontend (Sign-Up Flow)
+## 🚀 Automated Installation (Recommended)
 
-The frontend is **ready to run** right now!
-
-```bash
-cd /Users/bhageshwaridevnani/Documents/the-local-loop/frontend
-npm install
-npm run dev
-```
-
-**Open:** http://localhost:3000/register
-
-You'll see a beautiful 6-step sign-up form with:
-- ✅ Basic information
-- ✅ Role selection (Customer/Vendor/Delivery)
-- ✅ Address input
-- ✅ AI area validation (will show error until AI service is running)
-- ✅ Role-specific details
-- ✅ Password creation
-
-**Brand Color:** #00a0af (Teal/Cyan) with white backgrounds
-
----
-
-## 🤖 Step 2: Start AI Agents (Area Validation)
+### For macOS/Linux:
 
 ```bash
-cd /Users/bhageshwaridevnani/Documents/the-local-loop/ai-agents
+# Make the script executable
+chmod +x install.sh
 
-# Install dependencies
-pip install -r requirements.txt
-
-# Create .env file
-cp .env.example .env
-
-# Add your OpenAI API key to .env
-echo "OPENAI_API_KEY=your_key_here" > .env
-
-# Start the AI service
-python main.py
+# Run the installation script
+./install.sh
 ```
 
-**Runs at:** http://localhost:8000
+The script will:
+- ✅ Check prerequisites
+- ✅ Setup database
+- ✅ Install all dependencies
+- ✅ Configure environment variables
+- ✅ Run database migrations
+- ✅ Create start scripts
 
-**Test it:**
+### Start All Services:
+
 ```bash
-curl -X POST http://localhost:8000/agents/area-validation \
-  -H "Content-Type: application/json" \
-  -d '{
-    "address": "Lokhandwala Complex",
-    "pincode": "400053",
-    "city": "Mumbai"
-  }'
+./start-all.sh
 ```
 
----
+Or start individually:
 
-## 🎯 Step 3: Test the Complete Flow
-
-1. **Frontend running?** ✅ http://localhost:3000
-2. **AI agents running?** ✅ http://localhost:8000
-
-Now go to http://localhost:3000/register and:
-
-1. Fill basic info (name, email, phone)
-2. Select role (try "Customer")
-3. Enter address:
-   - Address: "Lokhandwala Complex, Andheri West"
-   - City: "Mumbai"
-   - Pincode: "400053"
-4. Click "Next" → AI will validate your area! 🤖
-5. If approved, continue to complete registration
-
----
-
-## 📊 What's Working Now
-
-✅ **Frontend:**
-- Complete 6-step sign-up flow
-- Beautiful UI with brand colors
-- Form validation
-- Progress indicator
-- Mobile responsive
-
-✅ **AI Agents:**
-- Area Intelligence Agent
-- Address validation using OpenAI GPT-4o
-- Multi-factor scoring (pincode, address, geolocation)
-- Returns: Approved/Rejected/Uncertain
-
----
-
-## 🔧 Troubleshooting
-
-### Frontend won't start?
 ```bash
-# Make sure you're in the right directory
-cd /Users/bhageshwaridevnani/Documents/the-local-loop/frontend
+# Terminal 1 - Backend
+cd backend && npm run dev
 
-# Check if package.json exists
-ls -la package.json
+# Terminal 2 - Frontend
+cd frontend && npm run dev
 
-# Reinstall dependencies
-rm -rf node_modules package-lock.json
-npm install
-npm run dev
+# Terminal 3 - AI Agents
+cd ai-agents && source venv/bin/activate && python main.py
 ```
 
-### AI agents error?
+## 🌐 Access the Application
+
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:5000
+- **AI Agents**: http://localhost:8000
+
+## 📝 Manual Installation
+
+If automated installation doesn't work, follow [SETUP.md](./SETUP.md) for detailed manual instructions.
+
+## 🎯 What to Do Next
+
+### For Customer UI Developer:
+1. Open `frontend/src/pages/Shops.jsx`
+2. Start building the shop browsing interface
+3. Test with: http://localhost:3000/shops
+
+### For Vendor/Delivery UI Developer:
+1. Create vendor dashboard pages
+2. Create delivery partner pages
+3. Implement order management
+
+### For Backend Developer:
+1. Implement API controllers in `backend/src/controllers/`
+2. Add validation middleware
+3. Test endpoints with Postman
+
+### For AI Agents Developer:
+1. Implement agent logic in `ai-agents/agents/`
+2. Create LangGraph workflows
+3. Test AI endpoints
+
+## 🐛 Troubleshooting
+
+### Services won't start?
 ```bash
-# Check if .env file exists
-cat .env
-
-# Make sure OpenAI API key is set
-echo $OPENAI_API_KEY
-
-# Check Python version (need 3.9+)
-python --version
-
-# Reinstall dependencies
-pip install -r requirements.txt --upgrade
+# Check if ports are available
+lsof -i :3000  # Frontend
+lsof -i :5000  # Backend
+lsof -i :8000  # AI Agents
 ```
 
-### Area validation not working?
-- Make sure AI agents service is running at http://localhost:8000
-- Check browser console for errors
-- Verify OpenAI API key is valid
-- Try using pincode "400053" (Area 1 - Andheri West)
-
----
-
-## 🎨 Customization
-
-### Change Service Area
-Edit `/ai-agents/agents/area_intelligence_agent.py`:
-
-```python
-self.area_1_config = {
-    "name": "Your Area Name",
-    "pincodes": ["123456", "123457"],
-    "landmarks": ["Landmark 1", "Landmark 2"],
-}
+### Database connection issues?
+```bash
+# Verify PostgreSQL is running
+psql -U postgres -c "SELECT version();"
 ```
 
-### Change Brand Color
-Edit `/frontend/src/index.css`:
+### Need help?
+Check [SETUP.md](./SETUP.md) for detailed troubleshooting.
 
-```css
-:root {
-  --brand-primary: #00a0af;  /* Change this */
-}
-```
+## 📚 Documentation
 
----
-
-## 📝 Next Steps
-
-1. **Backend:** Set up Node.js backend for user registration
-2. **Database:** Configure PostgreSQL and run migrations
-3. **Authentication:** Implement JWT-based auth
-4. **Dashboards:** Create vendor/customer/delivery dashboards
+- [README.md](./README.md) - Project overview
+- [SETUP.md](./SETUP.md) - Detailed setup guide
+- [API Documentation](./docs/API.md) - API endpoints
 
 ---
 
-## 🆘 Need Help?
-
-Check the main [README.md](./README.md) for detailed documentation.
-
-**Team Members:**
-- Frontend: React sign-up flow ✅
-- Backend: API endpoints (to do)
-- AI/ML: Area validation ✅
-- Database: Schema design (to do)
-
----
-
-**Happy Coding! 🚀**
+**Ready to build? Let's go! 🚀**
