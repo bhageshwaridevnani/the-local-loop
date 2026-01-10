@@ -186,4 +186,3 @@ Response (number only):"""
                 "scores": {"pincode": 0.0, "address": 0.0, "geolocation": 0.0}
             }
 
-# Made with Bob

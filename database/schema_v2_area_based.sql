@@ -287,4 +287,3 @@ COMMENT ON COLUMN users.area_id IS 'Links user to their service area - CRITICAL 
 COMMENT ON COLUMN products.area_id IS 'Ensures products are only visible in their area';
 COMMENT ON COLUMN orders.area_id IS 'Ensures orders stay within area boundaries';
 
--- Made with Bob
