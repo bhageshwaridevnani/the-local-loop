@@ -21,7 +21,7 @@ class AreaIntelligenceAgent:
     def __init__(self):
         # Configure Gemini
         genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-        self.model = genai.GenerativeModel('gemini-1.5-flash')
+        self.model = genai.GenerativeModel('gemini-2.0-flash')
         
         # Define Area 1 (Service Area) - Ahmedabad, Gujarat
         self.area_1_config = {

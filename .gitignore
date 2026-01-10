@@ -11,6 +11,11 @@ ENV/
 
 # Environment variables
 .env
+
+# GCP Credentials (NEVER commit these!)
+gcp-key.json
+*-key.json
+*.json.key
 .env.local
 
 # Build outputs

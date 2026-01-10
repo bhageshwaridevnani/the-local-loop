@@ -8,15 +8,20 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Import agents - Use Gemini version if GEMINI_API_KEY is set
-if os.getenv("GEMINI_API_KEY"):
+# Import agents - Priority: Vertex AI > Gemini > OpenAI
+if os.getenv("GCP_PROJECT_ID"):
+    print("🤖 Using Google Vertex AI (GCP)")
+    print(f"✅ GCP Project: {os.getenv('GCP_PROJECT_ID')}")
+    print(f"✅ Location: {os.getenv('GCP_LOCATION', 'us-central1')}")
+    from agents.area_intelligence_agent_vertex import AreaIntelligenceAgentVertex as AreaIntelligenceAgent
+elif os.getenv("GEMINI_API_KEY"):
     print("🤖 Using Google Gemini AI")
     from agents.area_intelligence_agent_gemini import AreaIntelligenceAgent
 elif os.getenv("OPENAI_API_KEY"):
     print("🤖 Using OpenAI GPT-4o")
     from agents.area_intelligence_agent import AreaIntelligenceAgent
 else:
-    print("⚠️  No API key found. Please set GEMINI_API_KEY or OPENAI_API_KEY in .env file")
+    print("⚠️  No API key found. Please set GCP_PROJECT_ID, GEMINI_API_KEY, or OPENAI_API_KEY in .env file")
     # Use a dummy agent for testing
     class AreaIntelligenceAgent:
         async def validate_area(self, address, pincode, city, coordinates=None):

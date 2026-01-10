@@ -6,4 +6,5 @@ pydantic-core==2.27.2
 
 # AI Providers (install one or both)
 openai==1.12.0
+google-cloud-aiplatform==1.38.0
 google-generativeai==0.8.3
