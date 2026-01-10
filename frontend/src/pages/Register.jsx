@@ -1,0 +1,12 @@
+function Register() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="card max-w-md w-full">
+        <h2 className="text-2xl font-bold mb-6">Register</h2>
+        <p className="text-gray-600">Register page - To be implemented by frontend developer</p>
+      </div>
+    </div>
+  );
+}
+
+export default Register;
