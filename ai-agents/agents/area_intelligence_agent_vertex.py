@@ -17,22 +17,31 @@ class AreaIntelligenceAgentVertex:
         vertexai.init(project=project_id, location=location)
         self.model = GenerativeModel('gemini-2.0-flash-exp')
         
-        # Define Area 1 (Service Area) - Ahmedabad, Gujarat
+        # Define Area 1 (Service Area) - ALL OF AHMEDABAD
         self.area_1_config = {
-            "name": "Gota, Ahmedabad",
-            "pincodes": ["382481", "382470", "382424"],
+            "name": "Ahmedabad",
+            "city": "Ahmedabad",
+            "pincodes": [
+                # All major Ahmedabad pincodes
+                "380001", "380002", "380003", "380004", "380005", "380006", "380007", "380008", "380009",
+                "380013", "380014", "380015", "380016", "380018", "380019", "380021", "380022", "380023",
+                "380024", "380025", "380026", "380027", "380028", "380050", "380051", "380052", "380053",
+                "380054", "380055", "380058", "380059", "380060", "380061", "380063", "382110", "382115",
+                "382120", "382130", "382140", "382150", "382170", "382210", "382213", "382220", "382230",
+                "382240", "382250", "382260", "382305", "382315", "382320", "382325", "382330", "382340",
+                "382345", "382350", "382355", "382405", "382410", "382415", "382418", "382421", "382424",
+                "382425", "382427", "382428", "382430", "382433", "382435", "382440", "382443", "382445",
+                "382449", "382450", "382455", "382460", "382465", "382470", "382475", "382480", "382481"
+            ],
             "landmarks": [
-                "Silver Oak University",
-                "Gota Gam",
-                "Gota Circle",
-                "Ognaj",
-                "Sargasan"
+                # Major landmarks across Ahmedabad
+                "Sabarmati Ashram", "Kankaria Lake", "Sardar Patel Stadium", "ISRO", "IIM Ahmedabad",
+                "Manek Chowk", "Law Garden", "CG Road", "SG Highway", "Ashram Road", "Paldi", "Vastrapur",
+                "Satellite", "Bodakdev", "Thaltej", "Gota", "Chandkheda", "Motera", "Naroda", "Nikol",
+                "Vastral", "Odhav", "Narol", "Vatva", "Maninagar", "Isanpur", "Bapunagar", "Saraspur"
             ],
             "boundaries": {
-                "north": "Vaishnodevi Circle",
-                "south": "Sola",
-                "east": "Tragad",
-                "west": "Ognaj"
+                "description": "Entire Ahmedabad city limits"
             }
         }
     
