@@ -41,22 +41,23 @@ services:
         source: /*
         destination: /index.html
 
-  # AI Agents Service (Python)
-  - type: web
-    name: local-loop-ai-agents
-    env: python
-    region: oregon
-    plan: free
-    buildCommand: cd ai-agents && pip install -r requirements.txt
-    startCommand: cd ai-agents && python main.py
-    envVars:
-      - key: GOOGLE_APPLICATION_CREDENTIALS
-        sync: false
-      - key: GCP_PROJECT_ID
-        sync: false
-      - key: PORT
-        value: 8000
-    healthCheckPath: /health
+  # AI Agents Service (Python) - Commented out for initial deployment
+  # Uncomment and configure GCP credentials after backend/frontend are working
+  # - type: web
+  #   name: local-loop-ai-agents
+  #   env: python
+  #   region: oregon
+  #   plan: free
+  #   buildCommand: cd ai-agents && pip install -r requirements.txt
+  #   startCommand: cd ai-agents && python main.py
+  #   envVars:
+  #     - key: GOOGLE_APPLICATION_CREDENTIALS
+  #       sync: false
+  #     - key: GCP_PROJECT_ID
+  #       sync: false
+  #     - key: PORT
+  #       value: 8000
+  #   healthCheckPath: /health
 
 databases:
   # PostgreSQL Database
