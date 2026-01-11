@@ -62,7 +62,4 @@ cd ../frontend
 npm run dev &
 FRONTEND_PID=$!
 
-# Wait for both processes
-wait
 
-# Made with Bob
