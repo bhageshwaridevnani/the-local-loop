@@ -8,7 +8,7 @@ services:
     env: node
     region: oregon
     plan: free
-    buildCommand: cd backend && npm install && npm run build
+    buildCommand: cd backend && npm install && npx prisma generate
     startCommand: cd backend && npm start
     envVars:
       - key: NODE_ENV
@@ -23,26 +23,19 @@ services:
         generateValue: true
       - key: JWT_EXPIRES_IN
         value: 7d
-      - key: FRONTEND_URL
-        fromService:
-          type: web
-          name: local-loop-frontend
-          property: host
-    healthCheckPath: /api/health
+      - key: CORS_ORIGIN
+        value: "*"
+    healthCheckPath: /health
 
   # Frontend Service
   - type: web
     name: local-loop-frontend
     env: static
-    plan: free
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
     envVars:
       - key: VITE_API_URL
-        fromService:
-          type: web
-          name: local-loop-backend
-          property: host
+        value: https://local-loop-backend.onrender.com
     routes:
       - type: rewrite
         source: /*
