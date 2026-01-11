@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Local Loop - Team NeoLogic</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow-x: hidden;
+        }
+
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            page-break-after: always;
+            background: white;
+            position: relative;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            color: #2d3748;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 2.5em;
+            color: #4a5568;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 1.8em;
+            color: #667eea;
+            margin: 20px 0 15px 0;
+        }
+
+        p, li {
+            font-size: 1.3em;
+            line-height: 1.8;
+            color: #4a5568;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            color: #718096;
+            margin-bottom: 40px;
+        }
+
+        .team-info {
+            font-size: 1.2em;
+            color: #4a5568;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        .highlight h2, .highlight h3 {
+            color: white;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            width: 100%;
+            margin: 30px 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            width: 100%;
+            margin: 30px 0;
+        }
+
+        .card {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+        }
+
+        .card h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            font-size: 1.1em;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        .emoji {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .flow-diagram {
+            background: #f7fafc;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .flow-step {
+            display: inline-block;
+            padding: 15px 25px;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
+            margin: 10px;
+            font-size: 1.1em;
+        }
+
+        .arrow {
+            display: inline-block;
+            font-size: 2em;
+            color: #667eea;
+            margin: 0 10px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin: 30px 0;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 25px;
+            background: #f7fafc;
+            border-radius: 12px;
+            min-width: 200px;
+        }
+
+        .stat-number {
+            font-size: 3em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 1.2em;
+            color: #4a5568;
+            margin-top: 10px;
+        }
+
+        @media print {
+            .slide {
+                page-break-after: always;
+            }
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            width: 100%;
+            margin: 30px 0;
+        }
+
+        .tech-item {
+            text-align: center;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 10px;
+        }
+
+        .tech-item h4 {
+            color: #667eea;
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+
+        .logo {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Slide 1: Title -->
+<div class="slide">
+    <div class="logo">🏪</div>
+    <h1>The Local Loop</h1>
+    <p class="subtitle">AI-Powered Hyperlocal Commerce Platform</p>
+    <div style="margin-top: 40px;">
+        <p class="team-info"><strong>Team:</strong> NeoLogic</p>
+        <p class="team-info"><strong>Team Leader:</strong> Bhageshwari Devnani</p>
+        <p class="team-info"><strong>Members:</strong> Ronak Gurjar, Pooja Mistry, Vinita Bhatia</p>
+        <p class="team-info" style="margin-top: 30px; color: #667eea;"><strong>Hackathon:</strong> AI Autonomous Agent Theme</p>
+    </div>
+    <div class="slide-number">1</div>
+</div>
+
+<!-- Slide 2: Problem Statement -->
+<div class="slide">
+    <h2>🎯 Problem Statement</h2>
+    <div class="grid">
+        <div class="card">
+            <h3>📍 Local Vendors</h3>
+            <p>Lack online presence and digital reach</p>
+        </div>
+        <div class="card">
+            <h3>🚚 Delivery Partners</h3>
+            <p>Don't get consistent work opportunities</p>
+        </div>
+        <div class="card">
+            <h3>💰 High Commissions</h3>
+            <p>Big platforms charge 20-30% from vendors</p>
+        </div>
+        <div class="card">
+            <h3>⏰ Customers</h3>
+            <p>Want instant local delivery options</p>
+        </div>
+    </div>
+    <div class="highlight">
+        <h3>Our Solution</h3>
+        <p style="color: white; font-size: 1.4em; text-align: center;">Hyperlocal marketplace connecting vendors, customers, and delivery partners within 5km radius</p>
+    </div>
+    <div class="slide-number">2</div>
+</div>
+
+<!-- Slide 3: AI Innovation -->
+<div class="slide">
+    <h2>🤖 AI Autonomous Agents</h2>
+    <div class="grid-3">
+        <div class="card">
+            <div class="emoji">🗺️</div>
+            <h3>Area Intelligence</h3>
+            <p>Validates location using Google Vertex AI (Gemini 2.0)</p>
+        </div>
+        <div class="card">
+            <div class="emoji">📊</div>
+            <h3>Vendor Optimization</h3>
+            <p>Pricing suggestions, stock alerts, demand prediction</p>
+        </div>
+        <div class="card">
+            <div class="emoji">🎯</div>
+            <h3>Customer Recommendation</h3>
+            <p>Personalized shop & product suggestions</p>
+        </div>
+        <div class="card">
+            <div class="emoji">🤖</div>
+            <h3>Order Orchestration</h3>
+            <p>Auto-assigns orders to best vendor</p>
+        </div>
+        <div class="card">
+            <div class="emoji">🚴</div>
+            <h3>Delivery Assignment</h3>
+            <p>Distance-based intelligent routing</p>
+        </div>
+        <div class="card">
+            <div class="emoji">💳</div>
+            <h3>Finance & Settlement</h3>
+            <p>Automated daily settlements & fraud detection</p>
+        </div>
+    </div>
+    <div class="slide-number">3</div>
+</div>
+
+<!-- Slide 4: Order Flow -->
+<div class="slide">
+    <h2>🔄 AI-Powered Order Flow</h2>
+    <div style="width: 100%; margin: 30px 0;">
+        <h3 style="text-align: center; color: #e53e3e;">❌ Traditional Flow</h3>
+        <div class="flow-diagram">
+            <span class="flow-step">Manual Search</span>
+            <span class="arrow">→</span>
+            <span class="flow-step">Call Vendor</span>
+            <span class="arrow">→</span>
+            <span class="flow-step">Wait</span>
+            <span class="arrow">→</span>
+            <span class="flow-step">Delivery</span>
+        </div>
+    </div>
+    <div style="width: 100%; margin: 30px 0;">
+        <h3 style="text-align: center; color: #38a169;">✅ Our AI Flow</h3>
+        <div class="flow-diagram">
+            <span class="flow-step">Order Placed</span>
+            <span class="arrow">↓</span>
+            <span class="flow-step">AI Validates (5km)</span>
+            <span class="arrow">↓</span>
+            <span class="flow-step">AI Finds Best Vendor</span>
+            <span class="arrow">↓</span>
+            <span class="flow-step">AI Assigns Delivery</span>
+            <span class="arrow">↓</span>
+            <span class="flow-step">Auto Settlement</span>
+        </div>
+    </div>
+    <div class="stats">
+        <div class="stat-box">
+            <div class="stat-number">80%</div>
+            <div class="stat-label">Faster Processing</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">0</div>
+            <div class="stat-label">Human Intervention</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number"><2s</div>
+            <div class="stat-label">Decision Time</div>
+        </div>
+    </div>
+    <div class="slide-number">4</div>
+</div>
+
+<!-- Slide 5: Tech Stack -->
+<div class="slide">
+    <h2>🎨 Tech Stack</h2>
+    <div class="tech-stack">
+        <div class="tech-item">
+            <div class="emoji">⚛️</div>
+            <h4>React.js</h4>
+            <p>Frontend</p>
+        </div>
+        <div class="tech-item">
+            <div class="emoji">🟢</div>
+            <h4>Node.js</h4>
+            <p>Backend</p>
+        </div>
+        <div class="tech-item">
+            <div class="emoji">🤖</div>
+            <h4>Vertex AI</h4>
+            <p>AI Layer</p>
+        </div>
+        <div class="tech-item">
+            <div class="emoji">🗄️</div>
+            <h4>SQLite</h4>
+            <p>Database</p>
+        </div>
+    </div>
+    <div class="grid" style="margin-top: 40px;">
+        <div class="card">
+            <h3>Frontend</h3>
+            <ul>
+                <li>React.js + Tailwind CSS</li>
+                <li>Real-time updates</li>
+                <li>Mobile-responsive</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>Backend</h3>
+            <ul>
+                <li>Node.js + Express</li>
+                <li>26 RESTful API endpoints</li>
+                <li>JWT Authentication</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>AI Layer</h3>
+            <ul>
+                <li>Google Vertex AI (Gemini 2.0)</li>
+                <li>Python FastAPI</li>
+                <li>Real-time decisions</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>Database</h3>
+            <ul>
+                <li>SQLite + Prisma ORM</li>
+                <li>Distance-based queries</li>
+                <li>8 optimized tables</li>
+            </ul>
+        </div>
+    </div>
+    <div class="slide-number">5</div>
+</div>
+
+<!-- Slide 6: Features -->
+<div class="slide">
+    <h2>📊 Key Features</h2>
+    <div class="grid-3">
+        <div class="card">
+            <h3>👥 For Customers</h3>
+            <ul>
+                <li>Browse nearby vendors (5km)</li>
+                <li>Real-time availability</li>
+                <li>₹10 fixed delivery fee</li>
+                <li>Order tracking</li>
+                <li>Profile management</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>🏪 For Vendors</h3>
+            <ul>
+                <li>Product management</li>
+                <li>Stock tracking</li>
+                <li>AI pricing suggestions</li>
+                <li>Order notifications</li>
+                <li>Only 5% commission</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>🚴 For Delivery</h3>
+            <ul>
+                <li>Order acceptance/rejection</li>
+                <li>Distance-based routing</li>
+                <li>Earnings tracking</li>
+                <li>Performance ratings</li>
+                <li>Flexible availability</li>
+            </ul>
+        </div>
+    </div>
+    <div class="slide-number">6</div>
+</div>
+
+<!-- Slide 7: Business Model -->
+<div class="slide">
+    <h2>💼 Business Model</h2>
+    <div class="grid">
+        <div class="card">
+            <h3>💰 Revenue Streams</h3>
+            <ul>
+                <li>5% commission from vendors</li>
+                <li>₹10 delivery fee per order</li>
+                <li>Premium listings (future)</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>📉 Cost Structure</h3>
+            <ul>
+                <li>AI API: ~₹0.50 per order</li>
+                <li>Server: Minimal (local)</li>
+                <li>Marketing: Community-driven</li>
+            </ul>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 30px;">
+        <h3>🚀 Scalability Plan</h3>
+        <div class="stats">
+            <div class="stat-box" style="background: rgba(255,255,255,0.2);">
+                <div class="stat-number" style="color: white;">1</div>
+                <div class="stat-label" style="color: white;">Start: 1 Area</div>
+            </div>
+            <div class="stat-box" style="background: rgba(255,255,255,0.2);">
+                <div class="stat-number" style="color: white;">10+</div>
+                <div class="stat-label" style="color: white;">Month 3</div>
+            </div>
+            <div class="stat-box" style="background: rgba(255,255,255,0.2);">
+                <div class="stat-number" style="color: white;">50+</div>
+                <div class="stat-label" style="color: white;">Month 6</div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">7</div>
+</div>
+
+<!-- Slide 8: Impact -->
+<div class="slide">
+    <h2>🌟 Social Impact</h2>
+    <div class="grid-3">
+        <div class="card">
+            <div class="emoji">📈</div>
+            <h3>Local Economy</h3>
+            <p>Vendors get 95% of order value vs 70% on big platforms</p>
+        </div>
+        <div class="card">
+            <div class="emoji">💼</div>
+            <h3>Job Creation</h3>
+            <p>Creates delivery jobs for local youth</p>
+        </div>
+        <div class="card">
+            <div class="emoji">🏪</div>
+            <h3>Digitization</h3>
+            <p>Brings small businesses online</p>
+        </div>
+        <div class="card">
+            <div class="emoji">🚴</div>
+            <h3>Environment</h3>
+            <p>Short-distance deliveries reduce carbon footprint</p>
+        </div>
+        <div class="card">
+            <div class="emoji">♻️</div>
+            <h3>Sustainability</h3>
+            <p>Promotes local consumption</p>
+        </div>
+        <div class="card">
+            <div class="emoji">🤝</div>
+            <h3>Community</h3>
+            <p>Strengthens local connections</p>
+        </div>
+    </div>
+    <div class="slide-number">8</div>
+</div>
+
+<!-- Slide 9: Current Status -->
+<div class="slide">
+    <h2>📊 Current Status</h2>
+    <div class="grid">
+        <div class="card" style="border-left-color: #38a169;">
+            <h3 style="color: #38a169;">✅ Completed</h3>
+            <ul>
+                <li>AI area validation (Vertex AI)</li>
+                <li>Complete authentication system</li>
+                <li>26 API endpoints</li>
+                <li>3 role-based dashboards</li>
+                <li>Order management</li>
+                <li>Distance-based filtering</li>
+                <li>Profile management</li>
+            </ul>
+        </div>
+        <div class="card" style="border-left-color: #ed8936;">
+            <h3 style="color: #ed8936;">🔄 In Progress</h3>
+            <ul>
+                <li>Delivery acceptance flow</li>
+                <li>Real-time notifications</li>
+                <li>Payment integration</li>
+            </ul>
+        </div>
+    </div>
+    <div class="stats" style="margin-top: 40px;">
+        <div class="stat-box">
+            <div class="stat-number">26</div>
+            <div class="stat-label">API Endpoints</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">8</div>
+            <div class="stat-label">Database Tables</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">6</div>
+            <div class="stat-label">AI Agents</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">5km</div>
+            <div class="stat-label">Service Radius</div>
+        </div>
+    </div>
+    <div class="slide-number">9</div>
+</div>
+
+<!-- Slide 10: Why We'll Win -->
+<div class="slide">
+    <h2>🏆 Why We'll Win</h2>
+    <div class="grid">
+        <div class="card">
+            <h3>1️⃣ Real Problem, Real Solution</h3>
+            <p>Solves actual local commerce issues, tested with real vendors in Ahmedabad</p>
+        </div>
+        <div class="card">
+            <h3>2️⃣ True AI Autonomy</h3>
+            <p>6 independent AI agents, zero human intervention, real-time decisions</p>
+        </div>
+        <div class="card">
+            <h3>3️⃣ Social Impact</h3>
+            <p>Empowers local economy, creates jobs, sustainable business model</p>
+        </div>
+        <div class="card">
+            <h3>4️⃣ Scalable & Practical</h3>
+            <p>Works with existing infrastructure, low costs, easy to replicate</p>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 30px;">
+        <h3 style="text-align: center; font-size: 2em;">Complete Implementation</h3>
+        <p style="color: white; font-size: 1.4em; text-align: center; margin-top: 20px;">
+            Fully functional MVP • Real AI integration • Production-ready code
+        </p>
+    </div>
+    <div class="slide-number">10</div>
+</div>
+
+<!-- Slide 11: Closing -->
+<div class="slide">
+    <div class="emoji">🏪</div>
+    <h1>The Local Loop</h1>
+    <div class="highlight" style="margin: 40px 0;">
+        <p style="color: white; font-size: 1.6em; text-align: center; font-style: italic;">
+            "The Local Loop isn't just a marketplace—it's an AI-powered ecosystem that brings local commerce into the digital age while keeping the community at its heart."
+        </p>
+    </div>
+    <h2 style="margin-top: 40px;">Our Vision</h2>
+    <p style="font-size: 1.4em; text-align: center; color: #667eea; margin-top: 20px;">
+        Every neighborhood should have its own digital marketplace, powered by AI, serving the local community.
+    </p>
+    <div class="slide-number">11</div>
+</div>
+
+<!-- Slide 12: Contact -->
+<div class="slide">
+    <h2>📞 Contact & Team</h2>
+    <div class="card" style="width: 80%; margin: 30px auto;">
+        <h3 style="text-align: center; margin-bottom: 30px;">Team NeoLogic</h3>
+        <div class="grid">
+            <div style="text-align: center; padding: 20px;">
+                <div class="emoji">👨‍💻</div>
+                <h4 style="color: #667eea; margin: 10px 0;">Bhageshwari Devnani</h4>
+                <p>Team Leader - AI & Backend</p>
+            </div>
+            <div style="text-align: center; padding: 20px;">
+                <div class="emoji">👨‍💻</div>
+                <h4 style="color: #667eea; margin: 10px 0;">Ronak Gurjar</h4>
+                <p>Frontend & UX</p>
+            </div>
+            <div style="text-align: center; padding: 20px;">
+                <div class="emoji">👩‍💻</div>
+                <h4 style="color: #667eea; margin: 10px 0;">Pooja Mistry</h4>
+                <p>Database & Architecture</p>
+            </div>
+            <div style="text-align: center; padding: 20px;">
+                <div class="emoji">👩‍💻</div>
+                <h4 style="color: #667eea; margin: 10px 0;">Vinita Bhatia</h4>
+                <p>Integration & Testing</p>
+            </div>
+        </div>
+    </div>
+    <div style="text-align: center; margin-top: 40px;">
+        <p style="font-size: 1.3em; margin: 10px 0;"><strong>GitHub:</strong> github.com/bhageshwaridevnani/the-local-loop</p>
+        <p style="font-size: 1.3em; margin: 10px 0;"><strong>Demo:</strong> localhost:3000</p>
+    </div>
+    <div class="slide-number">12</div>
+</div>
+
+<!-- Slide 13: Thank You -->
+<div class="slide" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="emoji" style="font-size: 5em;">🙏</div>
+    <h1 style="color: white; font-size: 4em;">Thank You!</h1>
+    <p style="color: white; font-size: 2em; margin-top: 30px;">Questions?</p>
+    <div style="margin-top: 60px;">
+        <p style="color: white; font-size: 1.5em;">Team NeoLogic</p>
+        <p style="color: white; font-size: 1.3em; margin-top: 10px;">AI Autonomous Agent Hackathon</p>
+    </div>
+    <div class="slide-number" style="color: white;">13</div>
+</div>
+
+<script>
+    // Print instructions
+    console.log('To export as PDF:');
+    console.log('1. Press Ctrl+P (or Cmd+P on Mac)');
+    console.log('2. Select "Save as PDF" as destination');
+    console.log('3. Set margins to "None"');
+    console.log('4. Enable "Background graphics"');
+    console.log('5. Click Save');
+</script>
+
+</body>
+</html>
