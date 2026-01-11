@@ -162,16 +162,6 @@ function Login() {
             Create an Account
           </Link>
         </div>
-
-        {/* Demo Credentials (Remove in production) */}
-        <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <p className="text-xs font-semibold text-yellow-800 mb-2">Demo Credentials:</p>
-          <div className="text-xs text-yellow-700 space-y-1">
-            <p>Customer: customer@test.com / password123</p>
-            <p>Vendor: vendor@test.com / password123</p>
-            <p>Delivery: delivery@test.com / password123</p>
-          </div>
-        </div>
       </div>
     </div>
   );
