@@ -26,6 +26,7 @@ const io = new Server(httpServer, {
       'http://localhost:3001',
       'http://127.0.0.1:3000',
       'http://127.0.0.1:3001',
+      'https://local-loop-frontend-jl7q.onrender.com',
       process.env.FRONTEND_URL
     ].filter(Boolean),
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
@@ -40,6 +41,7 @@ app.use(cors({
     'http://localhost:3001',
     'http://127.0.0.1:3000',
     'http://127.0.0.1:3001',
+    'https://local-loop-frontend-jl7q.onrender.com',
     process.env.FRONTEND_URL
   ].filter(Boolean),
   credentials: true,
