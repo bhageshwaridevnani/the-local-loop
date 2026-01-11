@@ -17,8 +17,13 @@ const Shops = () => {
 
   const fetchShops = async () => {
     try {
-      // No authentication required for public vendor list
-      const response = await axios.get('/api/vendors');
+      // Send authentication token to enable area-based filtering
+      const token = localStorage.getItem('token');
+      const config = token ? {
+        headers: { Authorization: `Bearer ${token}` }
+      } : {};
+      
+      const response = await axios.get('/api/vendors', config);
       setShops(response.data.vendors || []);
     } catch (error) {
       console.error('Failed to fetch shops:', error);

@@ -87,27 +87,41 @@ export const createOrder = async (req, res) => {
     const totalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const deliveryFee = 10.0;
 
-    // Check for available delivery partners
-    const availableDeliveryPartners = await prisma.deliveryProfile.findMany({
-      where: {
-        isAvailable: true
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            phone: true
-          }
-        }
-      }
+    // Get customer's pincode for area-based delivery partner filtering
+    const customer = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      select: { pincode: true }
     });
 
-    // If no delivery partner available, return error
+   const availableDeliveryPartners = await prisma.deliveryProfile.findMany({
+  where: {
+    isAvailable: true,
+    user: {
+      is: {
+        pincode: customer.pincode
+      }
+    }
+  },
+  include: {
+    user: {
+      select: {
+        id: true,
+        name: true,
+        phone: true,
+        pincode: true
+      }
+    }
+  }
+});
+
+
+
+
+    // If no delivery partner available in customer's area, return error
     if (availableDeliveryPartners.length === 0) {
       return res.status(400).json({
         error: 'NO_DELIVERY_PARTNER',
-        message: 'No delivery partner is currently available. Please try again later or contact the vendor directly.'
+        message: 'No delivery partner is currently available in your area. Please try again later or contact the vendor directly.'
       });
     }
 
@@ -197,14 +211,23 @@ export const getOrders = async (req, res) => {
       where.customerId = req.user.id;
     } else if (req.user.role === 'VENDOR') {
       const vendor = await prisma.vendor.findUnique({
-        where: { userId: req.user.id }
+        where: { userId: req.user.id },
+        include: {
+          user: {
+            select: { pincode: true }
+          }
+        }
       });
       if (!vendor) {
         return res.status(404).json({
           error: 'Vendor profile not found'
         });
       }
+      // Area-based filtering: Vendor only sees orders from customers in their pincode area
       where.vendorId = vendor.id;
+      where.customer = {
+        pincode: vendor.user.pincode
+      };
     } else if (req.user.role === 'DELIVERY') {
       // Delivery partner sees orders assigned to them
       const deliveries = await prisma.delivery.findMany({

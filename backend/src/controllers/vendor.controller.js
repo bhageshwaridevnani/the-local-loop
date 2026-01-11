@@ -2,12 +2,28 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// Get all vendors
+// Get all vendors (filtered by customer's area/pincode)
 export const getVendors = async (req, res) => {
   try {
     const { search, category, isActive } = req.query;
 
     const where = {};
+
+    // Area-based filtering: Only show vendors from customer's pincode area
+    if (req.user && req.user.id) {
+      const customer = await prisma.user.findUnique({
+        where: { id: req.user.id },
+        select: { pincode: true, role: true }
+      });
+
+      // Only apply pincode filter for customers
+      if (customer && customer.role === 'CUSTOMER' && customer.pincode) {
+        // Filter vendors by same pincode (same area) through user relation
+        where.user = {
+          pincode: customer.pincode
+        };
+      }
+    }
 
     if (search) {
       where.OR = [
@@ -57,7 +73,8 @@ export const getVendors = async (req, res) => {
       isActive: vendor.isActive,
       user: vendor.user,
       productCount: vendor._count.products,
-      orderCount: vendor._count.orders
+      orderCount: vendor._count.orders,
+      pincode: vendor.pincode
     }));
 
     res.json({

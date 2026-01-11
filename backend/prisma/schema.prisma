@@ -18,6 +18,15 @@ model User {
   password      String
   phone         String?
   role          String    @default("CUSTOMER")
+  
+  // Address fields (for customers and delivery partners)
+  address       String?   // Main address
+  landmark      String?   // Landmark
+  city          String?   // City (restricted to Ahmedabad)
+  pincode       String?   // Pincode
+  latitude      Float?    // GPS coordinates
+  longitude     Float?    // GPS coordinates
+  
   areaId        String?   @map("area_id")
   area          Area?     @relation(fields: [areaId], references: [id])
   isActive      Boolean   @default(true) @map("is_active")
@@ -75,7 +84,15 @@ model Vendor {
   userId          String    @unique @map("user_id")
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   shopName        String    @map("shop_name")
-  address         String
+  
+  // Address fields
+  address         String    // Main address
+  landmark        String?   // Landmark
+  city            String    @default("Ahmedabad") // City (restricted to Ahmedabad)
+  pincode         String    @default("380001") // Pincode
+  latitude        Float?    // GPS coordinates
+  longitude       Float?    // GPS coordinates
+  
   category        String?
   rating          Float     @default(4.5)
   reviewCount     Int       @default(0) @map("review_count")

@@ -5,17 +5,76 @@ const prisma = new PrismaClient();
 // ==================== PUBLIC ENDPOINTS ====================
 
 // Check if delivery partners are available (public endpoint for customers)
+// AREA-ISOLATED: Shows delivery partners matching BOTH customer AND vendor pincode
 export const checkAvailability = async (req, res) => {
   try {
+    const { vendorId } = req.query;
+    
+    // Get customer's pincode for area-based filtering
+    let customerPincode = null;
+    let vendorPincode = null;
+    
+    // If authenticated, get customer's pincode
+    if (req.user && req.user.id) {
+      const customer = await prisma.user.findUnique({
+        where: { id: req.user.id },
+        select: { pincode: true, role: true }
+      });
+      
+      if (customer && customer.role === 'CUSTOMER') {
+        customerPincode = customer.pincode;
+      }
+    }
+    
+    // If vendorId provided, get vendor's pincode
+    if (vendorId) {
+      const vendor = await prisma.user.findUnique({
+        where: { id: vendorId },
+        select: { pincode: true, role: true }
+      });
+      
+      if (vendor && vendor.role === 'VENDOR') {
+        vendorPincode = vendor.pincode;
+      }
+    }
+    
+    // Build where clause with pincode filter
+    const whereClause = {
+      isAvailable: true
+    };
+    
+    // CRITICAL: Delivery partner must match BOTH customer AND vendor pincode
+    // This ensures delivery partners are in the same area as both parties
+    if (customerPincode && vendorPincode) {
+      // Both customer and vendor must be in same pincode
+      if (customerPincode !== vendorPincode) {
+        return res.json({
+          available: false,
+          count: 0,
+          message: 'Vendor is not in your delivery area',
+          partners: []
+        });
+      }
+      
+      // Filter delivery partners by the common pincode
+      whereClause.user = {
+        pincode: customerPincode
+      };
+    } else if (customerPincode) {
+      // Only customer pincode available (no specific vendor)
+      whereClause.user = {
+        pincode: customerPincode
+      };
+    }
+    
     const availablePartners = await prisma.deliveryProfile.findMany({
-      where: {
-        isAvailable: true
-      },
+      where: whereClause,
       include: {
         user: {
           select: {
             name: true,
-            id: true
+            id: true,
+            pincode: true
           }
         }
       }
@@ -28,12 +87,13 @@ export const checkAvailability = async (req, res) => {
       count,
       message: count > 0
         ? `${count} delivery partner${count > 1 ? 's' : ''} available in your area`
-        : 'No delivery partners available at the moment',
+        : 'No delivery partners available in your area at the moment',
       partners: availablePartners.map(p => ({
         id: p.user.id,
         name: p.user.name,
         vehicleType: p.vehicleType,
-        rating: p.rating
+        rating: p.rating,
+        area: p.user.pincode
       }))
     });
   } catch (error) {
@@ -193,13 +253,24 @@ export const getPendingRequests = async (req, res) => {
       });
     }
 
+    // Get delivery partner's pincode for area-based filtering
+    const deliveryPartner = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      select: { pincode: true }
+    });
+
     // Get orders that are PENDING (newly created) and have PENDING delivery status
+    // Filter by delivery partner's pincode (same area only)
     const pendingRequests = await prisma.delivery.findMany({
       where: {
         status: 'PENDING',
         deliveryPartnerId: null,
         order: {
-          status: 'PENDING'
+          status: 'PENDING',
+          // Filter by vendor's pincode matching delivery partner's pincode
+          vendor: {
+            pincode: deliveryPartner?.pincode || undefined
+          }
         }
       },
       include: {

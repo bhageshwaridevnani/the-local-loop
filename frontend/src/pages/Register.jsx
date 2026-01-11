@@ -14,10 +14,17 @@ function Register() {
     password: '',
     phone: '',
     role: 'CUSTOMER',
+    // Address fields (required for all roles)
+    address: '',
+    landmark: '',
+    city: 'Ahmedabad',
+    pincode: '',
     // Vendor specific
     shopName: '',
-    address: '',
-    category: ''
+    category: '',
+    // Delivery specific
+    vehicleType: '',
+    vehicleNumber: ''
   });
   
   const [loading, setLoading] = useState(false);
@@ -34,12 +41,29 @@ function Register() {
     setLoading(true);
 
     try {
-      // Only send vendor fields if role is VENDOR
-      const dataToSend = { ...formData };
-      if (formData.role !== 'VENDOR') {
-        delete dataToSend.shopName;
-        delete dataToSend.address;
-        delete dataToSend.category;
+      // Prepare data based on role
+      const dataToSend = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone,
+        role: formData.role,
+        address: formData.address,
+        landmark: formData.landmark,
+        city: formData.city,
+        pincode: formData.pincode
+      };
+
+      // Add vendor-specific fields
+      if (formData.role === 'VENDOR') {
+        dataToSend.shopName = formData.shopName;
+        dataToSend.category = formData.category;
+      }
+
+      // Add delivery-specific fields
+      if (formData.role === 'DELIVERY') {
+        dataToSend.vehicleType = formData.vehicleType;
+        dataToSend.vehicleNumber = formData.vehicleNumber;
       }
       
       await register(dataToSend);
@@ -186,65 +210,162 @@ function Register() {
             />
           </div>
 
-          {/* Vendor Specific Fields */}
-          {formData.role === 'VENDOR' && (
-            <>
-              <div className="border-t pt-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Shop Details</h3>
-                
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Shop Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="shopName"
-                      value={formData.shopName}
-                      onChange={handleChange}
-                      required={formData.role === 'VENDOR'}
-                      className="input-field"
-                      placeholder="My Local Shop"
-                    />
-                  </div>
+          {/* Address Fields (Required for all roles) */}
+          <div className="border-t pt-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Address Details</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Address *
+                </label>
+                <textarea
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  required
+                  rows="2"
+                  className="input-field"
+                  placeholder="123 Main Street, Satellite"
+                />
+              </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Shop Address *
-                    </label>
-                    <textarea
-                      name="address"
-                      value={formData.address}
-                      onChange={handleChange}
-                      required={formData.role === 'VENDOR'}
-                      rows="3"
-                      className="input-field"
-                      placeholder="123 Main Street, Area 1"
-                    />
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Landmark
+                  </label>
+                  <input
+                    type="text"
+                    name="landmark"
+                    value={formData.landmark}
+                    onChange={handleChange}
+                    className="input-field"
+                    placeholder="Near ISRO"
+                  />
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Category
-                    </label>
-                    <select
-                      name="category"
-                      value={formData.category}
-                      onChange={handleChange}
-                      className="input-field"
-                    >
-                      <option value="">Select category</option>
-                      <option value="grocery">Grocery</option>
-                      <option value="pharmacy">Pharmacy</option>
-                      <option value="electronics">Electronics</option>
-                      <option value="clothing">Clothing</option>
-                      <option value="food">Food & Beverages</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    City *
+                  </label>
+                  <input
+                    type="text"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    required
+                    readOnly
+                    className="input-field bg-gray-100"
+                    placeholder="Ahmedabad"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Currently available only in Ahmedabad</p>
                 </div>
               </div>
-            </>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Pincode *
+                </label>
+                <input
+                  type="text"
+                  name="pincode"
+                  value={formData.pincode}
+                  onChange={handleChange}
+                  required
+                  pattern="[0-9]{6}"
+                  className="input-field"
+                  placeholder="e.g., 380001, 380015, 380058, 380061"
+                />
+                <p className="text-xs text-gray-500 mt-1">Valid Ahmedabad pincodes: 380001-380061</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Vendor Specific Fields */}
+          {formData.role === 'VENDOR' && (
+            <div className="border-t pt-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Shop Details</h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Shop Name *
+                  </label>
+                  <input
+                    type="text"
+                    name="shopName"
+                    value={formData.shopName}
+                    onChange={handleChange}
+                    required={formData.role === 'VENDOR'}
+                    className="input-field"
+                    placeholder="My Local Shop"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Category
+                  </label>
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    className="input-field"
+                  >
+                    <option value="">Select category</option>
+                    <option value="vegetables">Vegetables</option>
+                    <option value="fruits">Fruits</option>
+                    <option value="grocery">Grocery</option>
+                    <option value="dairy">Dairy</option>
+                    <option value="bakery">Bakery</option>
+                    <option value="meat">Meat & Fish</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Delivery Partner Specific Fields */}
+          {formData.role === 'DELIVERY' && (
+            <div className="border-t pt-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Vehicle Details</h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Vehicle Type
+                  </label>
+                  <select
+                    name="vehicleType"
+                    value={formData.vehicleType}
+                    onChange={handleChange}
+                    className="input-field"
+                  >
+                    <option value="">Select vehicle type</option>
+                    <option value="bike">Bike</option>
+                    <option value="scooter">Scooter</option>
+                    <option value="bicycle">Bicycle</option>
+                    <option value="car">Car</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Vehicle Number
+                  </label>
+                  <input
+                    type="text"
+                    name="vehicleNumber"
+                    value={formData.vehicleNumber}
+                    onChange={handleChange}
+                    className="input-field"
+                    placeholder="GJ01AB1234"
+                  />
+                </div>
+              </div>
+            </div>
           )}
 
           {/* Submit Button */}

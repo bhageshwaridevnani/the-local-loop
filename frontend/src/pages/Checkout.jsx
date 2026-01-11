@@ -48,10 +48,60 @@ const Checkout = () => {
   const checkDeliveryAvailability = async () => {
     setCheckingAvailability(true);
     try {
-      const response = await axios.get('/api/delivery/check-availability');
-      setDeliveryAvailable(response.data.available);
-      setAvailablePartners(response.data.partners || []);
-      setAvailabilityMessage(response.data.message);
+      // Group items by vendor to check availability for each vendor
+      const vendorGroups = cart.reduce((groups, item) => {
+        const vendorId = item.vendorId;
+        if (!groups[vendorId]) {
+          groups[vendorId] = [];
+        }
+        groups[vendorId].push(item);
+        return groups;
+      }, {});
+
+      const vendorIds = Object.keys(vendorGroups);
+      
+      if (vendorIds.length === 0) {
+        setDeliveryAvailable(false);
+        setAvailabilityMessage('No items in cart');
+        return;
+      }
+
+      // Check availability for each vendor
+      const availabilityChecks = await Promise.all(
+        vendorIds.map(vendorId =>
+          axios.get(`/api/delivery/check-availability?vendorId=${vendorId}`)
+        )
+      );
+
+      // All vendors must have delivery partners available
+      const allAvailable = availabilityChecks.every(response => response.data.available);
+      
+      if (allAvailable) {
+        // Combine all available partners (remove duplicates by ID)
+        const allPartners = availabilityChecks.flatMap(response => response.data.partners || []);
+        const uniquePartners = Array.from(
+          new Map(allPartners.map(p => [p.id, p])).values()
+        );
+        
+        setDeliveryAvailable(true);
+        setAvailablePartners(uniquePartners);
+        setAvailabilityMessage(
+          `${uniquePartners.length} delivery partner${uniquePartners.length > 1 ? 's' : ''} available for all your vendors`
+        );
+      } else {
+        // Find which vendors don't have delivery partners
+        const unavailableVendors = availabilityChecks
+          .filter(response => !response.data.available)
+          .map((response, index) => vendorIds[index]);
+        
+        setDeliveryAvailable(false);
+        setAvailablePartners([]);
+        setAvailabilityMessage(
+          unavailableVendors.length === vendorIds.length
+            ? 'No delivery partners available for any of your vendors'
+            : `No delivery partners available for ${unavailableVendors.length} vendor(s) in your cart`
+        );
+      }
     } catch (error) {
       console.error('Availability check error:', error);
       setDeliveryAvailable(false);
